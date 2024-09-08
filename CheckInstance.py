@@ -1,4 +1,4 @@
-from ColorfulMessage import Message as msg
+from lib.ColorfulMessage import Message as msg
 import os
 import subprocess
 

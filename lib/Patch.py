@@ -13,19 +13,21 @@ class Patch:
   
   @staticmethod
   def Replicas(namespace, deployment, replicas):
-    command = f"""kubectl -n {namespace} patch deploy {deployment} --patch '{{\"spec\":{{\"replicas\":{replicas}}}}}'"""
     patch_data = {
       "spec":{
-        "replicas":1
+        "replicas": replicas
         }
       }
     patch_json = json.dumps(patch_data)
     command = [
       "kubectl", "-n", namespace, "patch", "deploy", deployment, "--patch", patch_json
-    ] 
-    result = subprocess.run(command, check = True, capture_output = True, text = True)
-    output = result.stdout.strip()
-    print(output)
+    ]
+    try: 
+      result = subprocess.run(command, check = True, capture_output = True, text = True)
+      output = result.stdout.strip()
+      print(output)
+    except subprocess.CalledProcessError as e:
+      print(e.stderr)
 
 
   @staticmethod
@@ -36,7 +38,7 @@ class Patch:
           "spec":{
             "containers":[
               {
-                "name":"activator",
+                "name": deployment,
                 "image": image
                 }
               ]
@@ -50,14 +52,17 @@ class Patch:
       "kubectl", "-n", namespace, "patch", "deploy", deployment, "--patch", patch_json
     ]
 
-    result = subprocess.run(command, check = True, capture_output = True, text = True)
-    output = result.stdout.strip()
-    print(output)
+    try: 
+      result = subprocess.run(command, check = True, capture_output = True, text = True)
+      output = result.stdout.strip()
+      print(output)
+    except subprocess.CalledProcessError as e:
+      print(e.stderr)
 
 
   @staticmethod
   def Service(namespace, service, internal = None, external = None):
-    if internal is None:
+    if internal is None:    #Set up externalTrafficPolicy
       patch_data_external = {
         "spec":{
           "externalTrafficPolicy": external
@@ -67,11 +72,14 @@ class Patch:
       command = [
       "kubectl", "-n", namespace, "patch", "service", service, "--patch", patch_json_external
       ]
-      result = subprocess.run(command, check = True, capture_output = True, text = True)
-      output = result.stdout.strip()
-      print(output)
+      try: 
+        result = subprocess.run(command, check = True, capture_output = True, text = True)
+        output = result.stdout.strip()
+        print(output)
+      except subprocess.CalledProcessError as e:
+        print(e.stderr)
 
-    elif external is None:
+    elif external is None:    #Set up internalTrafficPolicy
       patch_data_internal = {
         "spec":{
           "internalTrafficPolicy": internal
@@ -81,11 +89,14 @@ class Patch:
       command = [
       "kubectl", "-n", namespace, "patch", "service", service, "--patch", patch_json_internal
       ]
-      result = subprocess.run(command, check = True, capture_output = True, text = True)
-      output = result.stdout.strip()
-      print(output)
+      try: 
+        result = subprocess.run(command, check = True, capture_output = True, text = True)
+        output = result.stdout.strip()
+        print(output)
+      except subprocess.CalledProcessError as e:
+        print(e.stderr)
 
-    else:
+    else:                    #Set up externalTrafficPolicy & internalTrafficPolicy
       patch_data_both = {
         "spec":{
           "internalTrafficPolicy": internal,
@@ -96,13 +107,16 @@ class Patch:
       command = [
       "kubectl", "-n", namespace, "patch", "service", service, "--patch", patch_json_both
       ]
-      result = subprocess.run(command, check = True, capture_output = True, text = True)
-      output = result.stdout.strip()
-      print(output)
+      try: 
+        result = subprocess.run(command, check = True, capture_output = True, text = True)
+        output = result.stdout.strip()
+        print(output)
+      except subprocess.CalledProcessError as e:
+        print(e.stderr)
 
 
   @staticmethod
-  def NodeSelector(namespace, deployment, nodes):
+  def NodeSelector(namespace, deployment, *nodes):
     patch_data = {
       "spec":{
         "template":{
@@ -116,9 +130,7 @@ class Patch:
                         {
                           "key":"kubernetes.io/hostname",
                           "operator":"In",
-                          "values":[
-                            {nodes} #"node1", "node2", "node3"
-                            ]
+                          "values": list(nodes) #"node1", "node2", "node3"
                           }
                         ]
                       }
@@ -135,12 +147,13 @@ class Patch:
     command = [
       "kubectl", "-n", namespace, "patch", "deploy", deployment, "--patch", patch_json
     ]
-
-    result = subprocess.run(command, check = True, capture_output = True, text = True)
-    output = result.stdout.strip()
-    print(output)
+    try: 
+      result = subprocess.run(command, check = True, capture_output = True, text = True)
+      output = result.stdout.strip()
+      print(output)
+    except subprocess.CalledProcessError as e:
+      print(e.stderr)
     
-
 
   @staticmethod
   def ImagePullPolicy(namespace, deployment, containerName, imagePullPolicy):
@@ -173,5 +186,20 @@ class Patch:
 
 patch = Patch()
 
+# Test bellpow
+
 # patch.Replicas("knative-serving", "activator", 3)
-patch.Image("default", "curl", "docker.io/rancher/curl")
+# => Done
+
+# patch.Image("default", "curl", "docker.io/rancher/curl")
+# patch.Image("default", "curl", "curlimages/curl")
+# => Done
+
+# patch.Service("kourier-system", "kourier-internal", internal="Cluster")
+# => Vanilla Done
+
+# patch.NodeSelector("knative-serving", "activator", "master-node", "worker01", "worker02")
+# Done
+
+
+
