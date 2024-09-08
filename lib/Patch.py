@@ -163,8 +163,8 @@ class Patch:
           "spec":{
             "containers":[
               {
-                "name": {containerName},
-                "imagePullPolicy": {imagePullPolicy}
+                "name": containerName,
+                "imagePullPolicy": imagePullPolicy
                 }
               ]
             }
@@ -177,14 +177,17 @@ class Patch:
       "kubectl", "-n", namespace, "patch", "deploy", deployment, "--patch", patch_json
     ]
 
-    result = subprocess.run(command, check = True, capture_output = True, text = True)
-    output = result.stdout.strip()
-    print(output)
+    try: 
+      result = subprocess.run(command, check = True, capture_output = True, text = True)
+      output = result.stdout.strip()
+      print(output)
+    except subprocess.CalledProcessError as e:
+      print(e.stderr)
 
     
 
 
-patch = Patch()
+# patch = Patch()
 
 # Test bellpow
 
@@ -200,6 +203,17 @@ patch = Patch()
 
 # patch.NodeSelector("knative-serving", "activator", "master-node", "worker01", "worker02")
 # Done
+
+# patch.ImagePullPolicy(namespace="knative-serving", 
+#                       deployment="activator", 
+#                       containerName="activator", 
+#                       imagePullPolicy="IfNotPresent")
+# => Dev local
+# patch.ImagePullPolicy(namespace="knative-serving", 
+#                       deployment="activator", 
+#                       containerName="activator", 
+#                       imagePullPolicy="Always")
+# => Ikukantai
 
 
 
