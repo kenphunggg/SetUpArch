@@ -41,10 +41,22 @@ class WaitPod:
       else:
         os.system(f"sleep {INTERVAL_SLEEP_TIME}")
   
-  def Removed():
-    pass
+  def Terminated(namespace, podname):
+    msg.YellowMessage(f"Waiting for terminating pods: {podname} ")
+    
+    INTERVAL_SLEEP_TIME = 5
+    os.system(f"sleep {INTERVAL_SLEEP_TIME}")
+    
+    while True:
+      nTotalPods = Count.TotalPod(namespace, podname)
+      if nTotalPods == 0:
+        msg.YellowMessage(f"All {podname} pods are deleted")
+        break
+      else:
+        os.system(f"sleep {INTERVAL_SLEEP_TIME}")
 
 
 
 # msg.BlueMessage(Count.TotalPod("knative-serving", "activator"))
-WaitPod.Running("knative-serving", "activator")
+# WaitPod.Running("default", "hello-00001-deployment")
+# WaitPod.Terminated("default", "hello-00001-deployment")
