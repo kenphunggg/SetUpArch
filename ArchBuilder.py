@@ -1,5 +1,7 @@
-import os
 from lib.Patch import Patch as patch
+
+
+######## Value For Short ########
 
 kourier_system = "kourier-system"
 gateway = "3scale-kourier-gateway"
@@ -9,8 +11,9 @@ controller = "controller"
 autoscaler = "autoscaler"
 net_kourier_controller = "net-kourier-controller"
 
-class vanila:
+#################################
 
+class vanila:
   @staticmethod
   def edge():
     # Patch Replicas
@@ -22,15 +25,16 @@ class vanila:
     patch.NodeSelector(knative_serving, activator, "worker02")
 
     # Patch Image
-    patch.Image(knative_serving, activator, 
+    patch.Image("knative_serving", "activator", "activator",
                 "gcr.io/knative-releases/knative.dev/serving/cmd/activator@sha256:4cdbe7acc718f55005c0fed4633e9e9feb64f03830132b5dd007e4088a0b2e9f")
-    patch.Image(knative_serving, controller,
+    patch.Image("knative_serving", "controller", "controller",
                 "gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:5d9b948e78bb4f54b602d98e02dedd291689b90295dadab10992f0d9ef2aa1d8")
-    patch.Image(knative_serving, autoscaler,
+    patch.Image("knative_serving", "autoscaler", "autoscaler",
                 "gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:28f45751cac2090019a74ec2801d1f8cd18210ae55159cacd0c9baf74ccc9d7c")
-    patch.Image(knative_serving, net_kourier_controller, 
+    patch.Image("knative_serving", "net-kourier-controller", "controller",
                 "gcr.io/knative-releases/knative.dev/net-kourier/cmd/kourier@sha256:9cd4d69a708a8cf8e597efe3f511494d71cf8eab1b2fd85545097069ad47d3f6")
-    patch.ImagePullPolicy(knative_serving, activator,
+    # 
+    patch.ImagePullPolicy("knative_serving", "activator",
                           containerName = activator, imagePullPolicy = "IfNotPresent")
     patch.ImagePullPolicy(knative_serving, net_kourier_controller,
                           containerName=controller, imagePullPolicy="IfNotPresent")
@@ -87,7 +91,7 @@ class proposal:  # Ikukantai
 
     # Patch Image
     patch.Image(knative_serving, activator,
-                f"docker.io/bonavadeur/ikukantai-activator:{tag}")
+                f"docker.io/bonavadeur/ikukantai-activator:{tag}") #
     patch.Image(knative_serving, controller,
                 f"docker.io/bonavadeur/ikukantai-controller:{tag}")
     patch.Image(knative_serving, autoscaler,

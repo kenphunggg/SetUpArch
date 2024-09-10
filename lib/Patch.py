@@ -2,8 +2,17 @@ import os
 import subprocess
 import json
 
-class Patch:
 
+def execute(command):
+  try:
+    result = subprocess.run(command, check=True, capture_output=True, text=True)
+    output = result.stdout.strip()
+    print(output)
+  except subprocess.CalledProcessError as error_output:
+    print(error_output)
+
+
+class Patch:
   @staticmethod
   def get(namespace, deployment):
     command = f"kubectl get pods -n {namespace} | grep {deployment}"
@@ -19,26 +28,22 @@ class Patch:
         }
       }
     patch_json = json.dumps(patch_data)
+    
     command = [
       "kubectl", "-n", namespace, "patch", "deploy", deployment, "--patch", patch_json
     ]
-    try: 
-      result = subprocess.run(command, check = True, capture_output = True, text = True)
-      output = result.stdout.strip()
-      print(output)
-    except subprocess.CalledProcessError as e:
-      print(e.stderr)
+    execute(command)
 
 
   @staticmethod
-  def Image(namespace, deployment, image):
+  def Image(namespace, deployment, container_name, image):
     patch_data = {
       "spec":{
         "template":{
           "spec":{
             "containers":[
               {
-                "name": deployment,
+                "name": container_name,
                 "image": image
                 }
               ]
@@ -51,13 +56,7 @@ class Patch:
     command = [
       "kubectl", "-n", namespace, "patch", "deploy", deployment, "--patch", patch_json
     ]
-
-    try: 
-      result = subprocess.run(command, check = True, capture_output = True, text = True)
-      output = result.stdout.strip()
-      print(output)
-    except subprocess.CalledProcessError as e:
-      print(e.stderr)
+    execute(command)
 
 
   @staticmethod
@@ -69,15 +68,11 @@ class Patch:
           }
         }
       patch_json_external = json.dumps(patch_data_external)
+
       command = [
       "kubectl", "-n", namespace, "patch", "service", service, "--patch", patch_json_external
       ]
-      try: 
-        result = subprocess.run(command, check = True, capture_output = True, text = True)
-        output = result.stdout.strip()
-        print(output)
-      except subprocess.CalledProcessError as e:
-        print(e.stderr)
+      execute(command)
 
     elif external is None:    #Set up internalTrafficPolicy
       patch_data_internal = {
@@ -86,15 +81,11 @@ class Patch:
           }
         }
       patch_json_internal = json.dumps(patch_data_internal)
+
       command = [
       "kubectl", "-n", namespace, "patch", "service", service, "--patch", patch_json_internal
       ]
-      try: 
-        result = subprocess.run(command, check = True, capture_output = True, text = True)
-        output = result.stdout.strip()
-        print(output)
-      except subprocess.CalledProcessError as e:
-        print(e.stderr)
+      execute(command)
 
     else:                    #Set up externalTrafficPolicy & internalTrafficPolicy
       patch_data_both = {
@@ -104,15 +95,11 @@ class Patch:
           }
         }
       patch_json_both = json.dumps(patch_data_both)
+
       command = [
       "kubectl", "-n", namespace, "patch", "service", service, "--patch", patch_json_both
       ]
-      try: 
-        result = subprocess.run(command, check = True, capture_output = True, text = True)
-        output = result.stdout.strip()
-        print(output)
-      except subprocess.CalledProcessError as e:
-        print(e.stderr)
+      execute(command)
 
 
   @staticmethod
@@ -147,12 +134,7 @@ class Patch:
     command = [
       "kubectl", "-n", namespace, "patch", "deploy", deployment, "--patch", patch_json
     ]
-    try: 
-      result = subprocess.run(command, check = True, capture_output = True, text = True)
-      output = result.stdout.strip()
-      print(output)
-    except subprocess.CalledProcessError as e:
-      print(e.stderr)
+    execute(command)
     
 
   @staticmethod
@@ -176,13 +158,7 @@ class Patch:
     command = [
       "kubectl", "-n", namespace, "patch", "deploy", deployment, "--patch", patch_json
     ]
-
-    try: 
-      result = subprocess.run(command, check = True, capture_output = True, text = True)
-      output = result.stdout.strip()
-      print(output)
-    except subprocess.CalledProcessError as e:
-      print(e.stderr)
+    execute(command)
 
     
 
