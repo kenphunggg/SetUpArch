@@ -55,7 +55,7 @@ class Wait:
       nTotalPods = Count.TotalPod(namespace, podname)
       nRuningPods = Count.RunningPod(namespace, podname)
       if nRuningPods == nTotalPods:
-        msg.YellowMessage(f"All {podname} pods are running")
+        msg.GreenMessage(f"All {podname} pods are running")
         break
       else:
         os.system(f"sleep {INTERVAL_SLEEP_TIME}")
