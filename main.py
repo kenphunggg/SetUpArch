@@ -6,8 +6,8 @@ from lib.ColorfulMessage import Message as msg
 from CheckInstance import Wait 
 
 
-def default():
-  msg.GreenMessage("Setting up Vanilla Edge Architecture")
+def defaultCustom():
+  msg.GreenMessage("Setting up Default Custom Architecture")
   build_vanilla.edge()
   Wait.PodRunning("knative-serving", "activator")
   Wait.PodRunning("knative-serving", "controller")
@@ -17,8 +17,8 @@ def default():
   msg.GreenMessage("All pods are running")
 
 
-def defaultCustom():
-  msg.GreenMessage("Setting up Vanilla Cloud Architecture")
+def default():
+  msg.GreenMessage("Setting up Default Architecture")
   build_vanilla.cloud()
   Wait.PodRunning("knative-serving", "activator")
   Wait.PodRunning("knative-serving", "controller")
