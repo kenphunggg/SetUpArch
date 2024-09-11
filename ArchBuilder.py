@@ -139,3 +139,13 @@ class proposal:  # Ikukantai
                   internal="Local", external="Local")
     patch.Service(kourier_system, "kourier-internal",
                   internal="Local")
+    
+class function:
+  def in_cloud():
+    patch.NodeSelector("default", "hello-00001-deployment", "master-node", "worker01")
+
+  def in_edge():
+    patch.NodeSelector("default", "hello-00001-deployment", "worker02")
+
+  def in_both():
+    patch.NodeSelector("default", "hello-00001-deployment", "master-node", "worker01", "worker02")

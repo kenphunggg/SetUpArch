@@ -1,11 +1,12 @@
 from ArchBuilder import (vanila as build_vanilla,
-                         proposal as build_proposal)
+                         proposal as build_proposal,
+                         function as build_function)
 import sys
 from lib.ColorfulMessage import Message as msg
 from CheckInstance import Wait 
 
 
-def vanilla_edge():
+def default():
   msg.GreenMessage("Setting up Vanilla Edge Architecture")
   build_vanilla.edge()
   Wait.PodRunning("knative-serving", "activator")
@@ -16,7 +17,7 @@ def vanilla_edge():
   msg.GreenMessage("All pods are running")
 
 
-def vanilla_cloud():
+def defaultCustom():
   msg.GreenMessage("Setting up Vanilla Cloud Architecture")
   build_vanilla.cloud()
   Wait.PodRunning("knative-serving", "activator")
@@ -37,6 +38,15 @@ def proposal():
   msg.GreenMessage("All pods are running")
   Wait.InPosition("knative-serving", "activator", "Master-node", "Worker01", "Worker02")
   Wait.InPosition("kourier-system", "3scale-kourier-gateway", "Master-node", "Worker01", "Worker02")
+
+def fxInCloud():
+  build_function.in_cloud()
+
+def fxInEdge():
+  build_function.in_edge()
+
+def fxIkukantai():
+  build_function.in_both()
 
 if __name__ == "__main__":
     args = sys.argv
