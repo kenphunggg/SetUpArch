@@ -27,6 +27,16 @@ def default():
   Wait.PodRunning("kourier-system", "3scale-kourier-gateway")
   msg.GreenMessage("All pods are running")
 
+def defaultPlus():
+  msg.GreenMessage("Setting up Default Plus Architecture")
+  build_vanilla.cloudPlus(tag="v1.2-cnsm-15nov24")
+  Wait.PodRunning("knative-serving", "activator")
+  Wait.PodRunning("knative-serving", "controller")
+  Wait.PodRunning("knative-serving", "autoscaler")
+  Wait.PodRunning("knative-serving", "net-kourier-controller")
+  Wait.PodRunning("kourier-system", "3scale-kourier-gateway")
+  msg.GreenMessage("All pods are running")
+
 def proposal():
   msg.GreenMessage("Setting up Ikukantai Architecture")
   build_proposal.dev_remote(tag="v1.2-cnsm-15nov24")

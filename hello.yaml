@@ -10,8 +10,7 @@ spec:
         autoscaling.knative.dev/scale-to-zero-pod-retention-period: "0s"
         autoscaling.knative.dev/target-burst-capacity: "-1"
         autoscaling.knative.dev/window: "12s"
-        autoscaling.knative.dev/min-scale: "1"  # Setup here
-        autoscaling.knative.dev/min-scale: "1"  # Setup here
+        autoscaling.knative.dev/min-scale: "2"  # Setup here
         autoscaling.knative.dev/target: "10"
     spec:
       affinity:
@@ -23,7 +22,7 @@ spec:
                 operator: In
                 values:
                 # - master-node
-                # - worker01
+                - worker01
                 - worker02
       containers:
       - image: docker.io/bonavadeur/shuka:v1.0
